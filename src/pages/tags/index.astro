@@ -1,0 +1,122 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import { SITE_TITLE } from '../../consts';
+
+const posts = await getCollection('blog');
+
+// タグごとの記事数を集計
+const tagCounts = posts.reduce((acc, post) => {
+	const tags = post.data.tags ?? [];
+	tags.forEach((tag) => {
+		acc[tag] = (acc[tag] || 0) + 1;
+	});
+	return acc;
+}, {} as Record<string, number>);
+
+// タグ名順にソート
+const sortedTags = Object.keys(tagCounts).sort((a, b) => a.localeCompare(b));
+---
+
+<!doctype html>
+<html lang="ja">
+	<head>
+		<BaseHead title={`Tags - ${SITE_TITLE}`} description="記事のタグ一覧" />
+		<style>
+			main {
+				width: 720px;
+				max-width: calc(100% - 2em);
+				margin: auto;
+				padding: 2.5em 1em;
+			}
+			.back-link {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.35rem;
+				margin-bottom: 2rem;
+				font-size: 0.9rem;
+				color: rgb(var(--gray));
+				text-decoration: none;
+				transition: color 0.15s ease;
+			}
+			.back-link:hover {
+				color: var(--accent);
+			}
+			.page-header {
+				margin-bottom: 2.5rem;
+			}
+			.page-header h1 {
+				font-size: 2rem;
+				margin-bottom: 0.5rem;
+				letter-spacing: -0.02em;
+			}
+			.page-header p {
+				color: rgb(var(--gray));
+				font-size: 0.95rem;
+				margin: 0;
+			}
+			.tag-list {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.75rem;
+				list-style-type: none;
+				padding: 0;
+				margin: 0;
+			}
+			.tag-item a {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.5rem;
+				padding: 0.45rem 1rem;
+				background-color: var(--bg-subtle);
+				border: 1px solid var(--border);
+				border-radius: 9999px;
+				font-size: 0.95rem;
+				color: rgb(var(--black));
+				text-decoration: none;
+				transition: all 0.15s ease;
+			}
+			.tag-item a:hover {
+				border-color: var(--accent);
+				color: var(--accent);
+				transform: translateY(-1px);
+			}
+			.tag-count {
+				font-size: 0.8rem;
+				color: rgb(var(--gray));
+				background-color: rgba(var(--gray-light), 0.5);
+				padding: 2px 8px;
+				border-radius: 9999px;
+			}
+			.tag-item a:hover .tag-count {
+				color: var(--accent);
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<a href="/" class="back-link">← ホームに戻る</a>
+			<header class="page-header">
+				<h1>Tags</h1>
+				<p>すべてのタグ一覧（全 {sortedTags.length} 種）</p>
+			</header>
+
+			<ul class="tag-list">
+				{
+					sortedTags.map((tag) => (
+						<li class="tag-item">
+							<a href={`/tags/${encodeURIComponent(tag)}/`}>
+								<span>#{tag}</span>
+								<span class="tag-count">{tagCounts[tag]}</span>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</main>
+		<Footer />
+	</body>
+</html>

@@ -2,6 +2,7 @@
 title: 'Goodbye gatsby. Hello astro'
 description: 'gatsbyからastroに乗り換え'
 pubDate: '2026/10/23'
+tags: ['Astro', 'Gatsby', 'Web']
 ---
 
 ## 構成を  gatsby から Astro に変更

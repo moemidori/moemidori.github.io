@@ -48,22 +48,45 @@ const posts = (await getCollection('blog')).sort(
 				margin: 0;
 			}
 
-			.posts-section h2 {
+			.posts-header {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				margin-bottom: 1.75rem;
+			}
+			.posts-header h2 {
 				font-size: 0.9rem;
 				text-transform: uppercase;
 				letter-spacing: 0.12em;
 				color: var(--accent);
-				margin-bottom: 1.75rem;
+				margin: 0;
 				font-weight: 700;
 				display: flex;
 				align-items: center;
 				gap: 0.75rem;
+				flex: 1;
 			}
-			.posts-section h2::after {
+			.posts-header h2::after {
 				content: '';
 				flex: 1;
 				height: 1px;
 				background-color: var(--border);
+				margin-right: 1rem;
+			}
+			.tags-link {
+				font-size: 0.85rem;
+				color: rgb(var(--gray));
+				text-decoration: none;
+				padding: 2px 10px;
+				border-radius: 9999px;
+				border: 1px solid var(--border);
+				background: var(--bg-subtle);
+				transition: all 0.15s ease;
+				white-space: nowrap;
+			}
+			.tags-link:hover {
+				color: var(--accent);
+				border-color: var(--accent);
 			}
 
 			.post-list {
@@ -77,7 +100,7 @@ const posts = (await getCollection('blog')).sort(
 			.post-link {
 				display: flex;
 				flex-direction: column;
-				gap: 0.35rem;
+				gap: 0.4rem;
 				text-decoration: none;
 				color: inherit;
 				padding: 0.25rem 0;
@@ -91,17 +114,35 @@ const posts = (await getCollection('blog')).sort(
 				letter-spacing: -0.01em;
 				transition: color 0.15s ease;
 			}
-			.post-date {
+			.post-meta {
+				display: flex;
+				align-items: center;
+				gap: 0.6rem;
 				font-size: 0.85rem;
+				flex-wrap: wrap;
+			}
+			.post-date {
 				color: rgb(var(--gray));
 				font-variant-numeric: tabular-nums;
 				transition: color 0.15s ease;
+			}
+			.tag-badge {
+				font-size: 0.75rem;
+				color: rgb(var(--gray));
+				background-color: var(--bg-subtle);
+				border: 1px solid var(--border);
+				padding: 1px 7px;
+				border-radius: 9999px;
+				transition: all 0.15s ease;
 			}
 			.post-link:hover .post-title {
 				color: var(--accent);
 			}
 			.post-link:hover .post-date {
 				color: rgb(var(--gray-dark));
+			}
+			.post-link:hover .tag-badge {
+				border-color: rgba(255, 119, 51, 0.4);
 			}
 		</style>
 	</head>
@@ -126,16 +167,26 @@ const posts = (await getCollection('blog')).sort(
 			</section>
 
 			<section class="posts-section">
-				<h2>Articles</h2>
+				<div class="posts-header">
+					<h2>Articles</h2>
+					<a href="/tags/" class="tags-link">#Tags</a>
+				</div>
 				<ul class="post-list">
 					{
 						posts.map((post) => (
 							<li class="post-item">
 								<a href={`/blog/${post.id}/`} class="post-link">
 									<span class="post-title">{post.data.title}</span>
-									<span class="post-date">
-										<FormattedDate date={post.data.pubDate} />
-									</span>
+									<div class="post-meta">
+										<span class="post-date">
+											<FormattedDate date={post.data.pubDate} />
+										</span>
+										{
+											post.data.tags?.map((t) => (
+												<span class="tag-badge">#{t}</span>
+											))
+										}
+									</div>
 								</a>
 							</li>
 						))

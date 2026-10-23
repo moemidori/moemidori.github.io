@@ -8,7 +8,7 @@ import Header from '../components/Header.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, tags } = Astro.props;
 ---
 
 <!doctype html>
@@ -53,6 +53,13 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				margin: 0 0 0.75rem 0;
 				color: rgb(var(--black));
 			}
+			.article-meta {
+				display: flex;
+				align-items: center;
+				gap: 1rem;
+				flex-wrap: wrap;
+				margin-bottom: 0.75rem;
+			}
 			.date {
 				font-size: 0.95rem;
 				color: rgb(var(--gray));
@@ -60,8 +67,27 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			}
 			.last-updated-on {
 				font-style: italic;
-				margin-top: 0.25rem;
+				margin-left: 0.5rem;
 				color: rgb(var(--gray));
+			}
+			.article-tags {
+				display: flex;
+				gap: 0.5rem;
+				flex-wrap: wrap;
+			}
+			.tag-badge {
+				font-size: 0.75rem;
+				color: rgb(var(--gray));
+				background-color: var(--bg-subtle);
+				border: 1px solid var(--border);
+				padding: 1px 8px;
+				border-radius: 9999px;
+				text-decoration: none;
+				transition: all 0.15s ease;
+			}
+			.tag-badge:hover {
+				color: var(--accent);
+				border-color: var(--accent);
 			}
 			.divider {
 				border: 0;
@@ -88,12 +114,25 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 					)
 				}
 				<div class="article-header">
-					<div class="date">
-						<FormattedDate date={pubDate} />
+					<div class="article-meta">
+						<div class="date">
+							<FormattedDate date={pubDate} />
+							{
+								updatedDate && (
+									<span class="last-updated-on">
+										(更新日: <FormattedDate date={updatedDate} />)
+									</span>
+								)
+							}
+						</div>
 						{
-							updatedDate && (
-								<div class="last-updated-on">
-									(更新日: <FormattedDate date={updatedDate} />)
+							tags && tags.length > 0 && (
+								<div class="article-tags">
+									{tags.map((t) => (
+										<a href={`/tags/${encodeURIComponent(t)}/`} class="tag-badge">
+											#{t}
+										</a>
+									))}
 								</div>
 							)
 						}

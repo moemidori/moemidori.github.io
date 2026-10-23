@@ -2,6 +2,7 @@
 title: 'Hello world'
 description: 'hello world first post'
 pubDate: '2025/03/08'
+tags: ['Gatsby', 'Daily']
 ---
 First postということで
 軽くこのページの立ち上げ経緯など記載

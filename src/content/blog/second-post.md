@@ -2,6 +2,7 @@
 title: 'Obsidianで始めるデジタルメモ習慣'
 description: 'Obsidian memo is god'
 pubDate: '2025/03/31'
+tags: ['Obsidian', 'Tools']
 ---
 
 ## 日常的にメモ
