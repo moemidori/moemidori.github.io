@@ -1,0 +1,23 @@
+---
+import { SITE_TITLE } from '../consts';
+
+const today = new Date();
+---
+
+<footer>
+	<p>&copy; {today.getFullYear()} {SITE_TITLE}. All rights reserved.</p>
+</footer>
+<style>
+	footer {
+		max-width: 720px;
+		margin: 3em auto 0 auto;
+		padding: 2.5em 1em 4em 1em;
+		text-align: center;
+		color: rgb(var(--gray));
+		font-size: 0.85rem;
+		border-top: 1px solid var(--border);
+	}
+	p {
+		margin: 0;
+	}
+</style>
