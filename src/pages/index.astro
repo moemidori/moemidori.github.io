@@ -72,47 +72,36 @@ const posts = (await getCollection('blog')).sort(
 				margin: 0;
 			}
 			.post-item {
-				margin-bottom: 1.25rem;
+				margin-bottom: 2rem;
 			}
 			.post-link {
 				display: flex;
-				align-items: baseline;
-				gap: 1.5rem;
+				flex-direction: column;
+				gap: 0.35rem;
 				text-decoration: none;
 				color: inherit;
-				padding: 0.35rem 0;
+				padding: 0.25rem 0;
 				transition: all 0.15s ease;
+			}
+			.post-title {
+				font-size: 1.35rem;
+				color: rgb(var(--black));
+				line-height: 1.4;
+				font-weight: 600;
+				letter-spacing: -0.01em;
+				transition: color 0.15s ease;
+			}
+			.post-date {
+				font-size: 0.85rem;
+				color: rgb(var(--gray));
+				font-variant-numeric: tabular-nums;
+				transition: color 0.15s ease;
 			}
 			.post-link:hover .post-title {
 				color: var(--accent);
 			}
 			.post-link:hover .post-date {
 				color: rgb(var(--gray-dark));
-			}
-			.post-date {
-				font-size: 0.9rem;
-				color: rgb(var(--gray));
-				font-variant-numeric: tabular-nums;
-				white-space: nowrap;
-				min-width: 95px;
-				transition: color 0.15s ease;
-			}
-			.post-title {
-				font-size: 1.05rem;
-				color: rgb(var(--black));
-				line-height: 1.4;
-				font-weight: 500;
-				transition: color 0.15s ease;
-			}
-
-			@media (max-width: 600px) {
-				.post-link {
-					flex-direction: column;
-					gap: 0.25rem;
-				}
-				.post-date {
-					font-size: 0.85rem;
-				}
 			}
 		</style>
 	</head>
@@ -143,10 +132,10 @@ const posts = (await getCollection('blog')).sort(
 						posts.map((post) => (
 							<li class="post-item">
 								<a href={`/blog/${post.id}/`} class="post-link">
+									<span class="post-title">{post.data.title}</span>
 									<span class="post-date">
 										<FormattedDate date={post.data.pubDate} />
 									</span>
-									<span class="post-title">{post.data.title}</span>
 								</a>
 							</li>
 						))
