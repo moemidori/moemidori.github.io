@@ -45,11 +45,11 @@ const { title, description, pubDate, updatedDate, heroImage, tags } = Astro.prop
 				border-radius: 8px;
 			}
 			.article-header {
-				margin-bottom: 2.5rem;
+				margin-bottom: 2rem;
 			}
 			.article-header h1 {
-				font-size: 2.2rem;
-				line-height: 1.3;
+				font-size: 1.75rem;
+				line-height: 1.35;
 				margin: 0 0 0.75rem 0;
 				color: rgb(var(--black));
 			}
@@ -61,7 +61,7 @@ const { title, description, pubDate, updatedDate, heroImage, tags } = Astro.prop
 				margin-bottom: 0.75rem;
 			}
 			.date {
-				font-size: 0.95rem;
+				font-size: 0.9rem;
 				color: rgb(var(--gray));
 				font-variant-numeric: tabular-nums;
 			}
@@ -92,11 +92,30 @@ const { title, description, pubDate, updatedDate, heroImage, tags } = Astro.prop
 			.divider {
 				border: 0;
 				border-top: 1px solid var(--border);
-				margin: 1.5rem 0 2.5rem 0;
+				margin: 1.25rem 0 2rem 0;
 			}
 			.prose {
 				color: rgb(var(--gray-dark));
 				line-height: 1.85;
+			}
+			.prose h2 {
+				font-size: 1.35rem;
+				line-height: 1.4;
+				margin-top: 2.5rem;
+				margin-bottom: 0.85rem;
+				padding-bottom: 0.35rem;
+				border-bottom: 1px solid var(--border);
+			}
+			.prose h3 {
+				font-size: 1.15rem;
+				line-height: 1.45;
+				margin-top: 2rem;
+				margin-bottom: 0.6rem;
+			}
+			.prose h4 {
+				font-size: 1.05rem;
+				margin-top: 1.5rem;
+				margin-bottom: 0.5rem;
 			}
 		</style>
 	</head>
