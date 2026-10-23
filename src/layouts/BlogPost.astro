@@ -1,4 +1,5 @@
 ---
+import type { MarkdownHeading } from 'astro';
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
@@ -6,9 +7,14 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<'blog'>['data'] & {
+	headings?: MarkdownHeading[];
+};
 
-const { title, description, pubDate, updatedDate, heroImage, tags } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, tags, headings = [] } = Astro.props;
+
+// h2, h3 の見出しを抽出して目次を作成
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
 <!doctype html>
@@ -17,7 +23,7 @@ const { title, description, pubDate, updatedDate, heroImage, tags } = Astro.prop
 		<BaseHead title={title} description={description} />
 		<style>
 			main {
-				width: 720px;
+				width: 1040px;
 				max-width: calc(100% - 2em);
 				margin: auto;
 				padding: 2.5em 1em;
@@ -35,6 +41,88 @@ const { title, description, pubDate, updatedDate, heroImage, tags } = Astro.prop
 			.back-link:hover {
 				color: var(--accent);
 			}
+
+			/* 2カラムレイアウト（記事本体 + 右側目次） */
+			.post-layout {
+				display: flex;
+				gap: 3.5rem;
+				align-items: flex-start;
+			}
+			.post-main {
+				flex: 1;
+				min-width: 0;
+				max-width: 720px;
+			}
+
+			/* デスクトップ用 目次サイドバー */
+			.toc-sidebar {
+				width: 240px;
+				flex-shrink: 0;
+				position: sticky;
+				top: 5.5rem;
+				max-height: calc(100vh - 7rem);
+				overflow-y: auto;
+			}
+			.toc {
+				padding: 0.5rem 0 0.5rem 1.25rem;
+				border-left: 1px solid var(--border);
+			}
+			.toc-heading {
+				font-size: 0.75rem;
+				font-weight: 700;
+				text-transform: uppercase;
+				letter-spacing: 0.12em;
+				color: var(--accent);
+				margin: 0 0 0.85rem 0;
+			}
+			.toc-list {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+			}
+			.toc-item {
+				margin-bottom: 0.55rem;
+				line-height: 1.4;
+			}
+			.toc-item.depth-3 {
+				padding-left: 0.85rem;
+			}
+			.toc-item a {
+				color: rgb(var(--gray));
+				text-decoration: none;
+				font-size: 0.85rem;
+				transition: color 0.15s ease;
+				display: block;
+			}
+			.toc-item.depth-3 a {
+				font-size: 0.8rem;
+			}
+			.toc-item a:hover {
+				color: var(--accent);
+			}
+
+			/* スマホ向け折りたたみ目次 */
+			.mobile-toc {
+				display: none;
+				margin-bottom: 2rem;
+				padding: 0.75rem 1rem;
+				background-color: var(--bg-subtle);
+				border: 1px solid var(--border);
+				border-radius: 8px;
+			}
+			.mobile-toc summary {
+				font-size: 0.9rem;
+				font-weight: 600;
+				color: var(--accent);
+				cursor: pointer;
+				user-select: none;
+			}
+			.mobile-toc .toc-list {
+				margin-top: 0.75rem;
+				padding-top: 0.75rem;
+				border-top: 1px solid var(--border);
+			}
+
 			.hero-image {
 				width: 100%;
 				margin-bottom: 2rem;
@@ -105,17 +193,35 @@ const { title, description, pubDate, updatedDate, heroImage, tags } = Astro.prop
 				margin-bottom: 0.85rem;
 				padding-bottom: 0.35rem;
 				border-bottom: 1px solid var(--border);
+				scroll-margin-top: 5rem;
 			}
 			.prose h3 {
 				font-size: 1.15rem;
 				line-height: 1.45;
 				margin-top: 2rem;
 				margin-bottom: 0.6rem;
+				scroll-margin-top: 5rem;
 			}
 			.prose h4 {
 				font-size: 1.05rem;
 				margin-top: 1.5rem;
 				margin-bottom: 0.5rem;
+				scroll-margin-top: 5rem;
+			}
+
+			@media (max-width: 1040px) {
+				.post-layout {
+					display: block;
+				}
+				.post-main {
+					max-width: 100%;
+				}
+				.toc-sidebar {
+					display: none;
+				}
+				.mobile-toc {
+					display: block;
+				}
 			}
 		</style>
 	</head>
@@ -123,46 +229,81 @@ const { title, description, pubDate, updatedDate, heroImage, tags } = Astro.prop
 	<body>
 		<Header />
 		<main>
-			<article>
-				<a href="/" class="back-link">← ホームに戻る</a>
-				{
-					heroImage && (
-						<div class="hero-image">
-							<Image width={1020} height={510} src={heroImage} alt="" />
-						</div>
-					)
-				}
-				<div class="article-header">
-					<div class="article-meta">
-						<div class="date">
-							<FormattedDate date={pubDate} />
+			<a href="/" class="back-link">← ホームに戻る</a>
+			<div class="post-layout">
+				<article class="post-main">
+					{
+						heroImage && (
+							<div class="hero-image">
+								<Image width={1020} height={510} src={heroImage} alt="" />
+							</div>
+						)
+					}
+					<div class="article-header">
+						<div class="article-meta">
+							<div class="date">
+								<FormattedDate date={pubDate} />
+								{
+									updatedDate && (
+										<span class="last-updated-on">
+											(更新日: <FormattedDate date={updatedDate} />)
+										</span>
+									)
+								}
+							</div>
 							{
-								updatedDate && (
-									<span class="last-updated-on">
-										(更新日: <FormattedDate date={updatedDate} />)
-									</span>
+								tags && tags.length > 0 && (
+									<div class="article-tags">
+										{tags.map((t) => (
+											<a href={`/tags/${encodeURIComponent(t)}/`} class="tag-badge">
+												#{t}
+											</a>
+										))}
+									</div>
 								)
 							}
 						</div>
-						{
-							tags && tags.length > 0 && (
-								<div class="article-tags">
-									{tags.map((t) => (
-										<a href={`/tags/${encodeURIComponent(t)}/`} class="tag-badge">
-											#{t}
-										</a>
-									))}
-								</div>
-							)
-						}
+						<h1>{title}</h1>
+						<hr class="divider" />
 					</div>
-					<h1>{title}</h1>
-					<hr class="divider" />
-				</div>
-				<div class="prose">
-					<slot />
-				</div>
-			</article>
+
+					{
+						toc.length > 0 && (
+							<details class="mobile-toc">
+								<summary>目次を表示 ({toc.length})</summary>
+								<ul class="toc-list">
+									{toc.map((h) => (
+										<li class={`toc-item depth-${h.depth}`}>
+											<a href={`#${h.slug}`}>{h.text}</a>
+										</li>
+									))}
+								</ul>
+							</details>
+						)
+					}
+
+					<div class="prose">
+						<slot />
+					</div>
+				</article>
+
+				{
+					toc.length > 0 && (
+						<aside class="toc-sidebar">
+							<nav class="toc">
+								<p class="toc-heading">目次</p>
+								<ul class="toc-list">
+									{toc.map((h) => (
+										<li class={`toc-item depth-${h.depth}`}>
+											<a href={`#${h.slug}`}>{h.text}</a>
+										</li>
+									))}
+								</ul>
+							</nav>
+						</aside>
+					)
+				}
+			</div>
 		</main>
 		<Footer />
 	</body>
